@@ -150,7 +150,7 @@ void CHudSuitPower::Paint()
 	}
 	if (m_nSuitPowerLow != lowPower)
 	{
-		if (m_iActiveSuitDevices || m_flSuitPower < 100.0f)
+		if (m_flSuitPower >= 0.0)
 		{
 			if (lowPower)
 			{

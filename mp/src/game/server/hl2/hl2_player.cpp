@@ -79,16 +79,16 @@ extern int gEvilImpulse101;
 
 ConVar sv_autojump( "sv_autojump", "0" );
 
-ConVar hl2_walkspeed( "hl2_walkspeed", "150" );
-ConVar hl2_normspeed( "hl2_normspeed", "190" );
-ConVar hl2_sprintspeed( "hl2_sprintspeed", "320" );
+ConVar hl2_walkspeed( "hl2_walkspeed", "200" );
+ConVar hl2_normspeed( "hl2_normspeed", "250" );
+ConVar hl2_sprintspeed( "hl2_sprintspeed", "250" );
 
 ConVar hl2_darkness_flashlight_factor ( "hl2_darkness_flashlight_factor", "1" );
 
 #ifdef HL2MP
-	#define	HL2_WALK_SPEED 150
-	#define	HL2_NORM_SPEED 190
-	#define	HL2_SPRINT_SPEED 320
+	#define	HL2_WALK_SPEED 200
+	#define	HL2_NORM_SPEED 250
+	#define	HL2_SPRINT_SPEED 250
 #else
 	#define	HL2_WALK_SPEED hl2_walkspeed.GetFloat()
 	#define	HL2_NORM_SPEED hl2_normspeed.GetFloat()
@@ -391,7 +391,7 @@ CHL2_Player::CHL2_Player()
 {
 	m_nNumMissPositions	= 0;
 	m_pPlayerAISquad = 0;
-	m_bSprintEnabled = true;
+	m_bSprintEnabled = false;
 
 	m_flArmorReductionTime = 0.0f;
 	m_iArmorReductionFrom = 0;
@@ -400,7 +400,7 @@ CHL2_Player::CHL2_Player()
 //
 // SUIT POWER DEVICES
 //
-#define SUITPOWER_CHARGE_RATE	12.5											// 100 units in 8 seconds
+#define SUITPOWER_CHARGE_RATE	0											// 100 units in 8 seconds
 
 #ifdef HL2MP
 	CSuitPowerDevice SuitDeviceSprint( bits_SUIT_DEVICE_SPRINT, 25.0f );				// 100 units in 4 seconds
@@ -1126,7 +1126,7 @@ void CHL2_Player::Spawn(void)
 	if ( !IsSuitEquipped() )
 		 StartWalking();
 
-	SuitPower_SetCharge( 100 );
+	SuitPower_SetCharge( 0 );
 
 	m_Local.m_iHideHUD |= HIDEHUD_CHAT;
 
@@ -1853,7 +1853,7 @@ void CHL2_Player::SuitPower_Update( void )
 void CHL2_Player::SuitPower_Initialize( void )
 {
 	m_HL2Local.m_bitsActiveDevices = 0x00000000;
-	m_HL2Local.m_flSuitPower = 100.0;
+	m_HL2Local.m_flSuitPower = 0.0;
 	m_flSuitPowerLoad = 0.0;
 }
 
@@ -2441,6 +2441,7 @@ void CHL2_Player::CombineBallSocketed( CPropCombineBall *pCombineBall )
 void CHL2_Player::Event_KilledOther( CBaseEntity *pVictim, const CTakeDamageInfo &info )
 {
 	BaseClass::Event_KilledOther( pVictim, info );
+	SuitPower_Charge(10);
 
 #ifdef HL2_EPISODIC
 
