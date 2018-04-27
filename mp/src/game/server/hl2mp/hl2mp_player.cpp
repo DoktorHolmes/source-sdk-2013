@@ -200,23 +200,9 @@ void CHL2MP_Player::GiveDefaultItems( void )
 
 	CBasePlayer::GiveAmmo( 255,	"Pistol");
 	CBasePlayer::GiveAmmo( 45,	"SMG1");
-	CBasePlayer::GiveAmmo( 1,	"grenade" );
-	CBasePlayer::GiveAmmo( 6,	"Buckshot");
-	CBasePlayer::GiveAmmo( 6,	"357" );
-
-	if ( GetPlayerModelType() == PLAYER_SOUNDS_METROPOLICE || GetPlayerModelType() == PLAYER_SOUNDS_COMBINESOLDIER )
-	{
-		GiveNamedItem( "weapon_stunstick" );
-	}
-	else if ( GetPlayerModelType() == PLAYER_SOUNDS_CITIZEN )
-	{
-		GiveNamedItem( "weapon_crowbar" );
-	}
 	
 	GiveNamedItem( "weapon_pistol" );
 	GiveNamedItem( "weapon_smg1" );
-	GiveNamedItem( "weapon_frag" );
-	GiveNamedItem( "weapon_physcannon" );
 
 	const char *szDefaultWeaponName = engine->GetClientConVarValue( engine->IndexOfEdict( edict() ), "cl_defaultweapon" );
 
@@ -228,7 +214,7 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	}
 	else
 	{
-		Weapon_Switch( Weapon_OwnsThisType( "weapon_physcannon" ) );
+		Weapon_Switch( Weapon_OwnsThisType( "SMG1" ) );
 	}
 }
 
@@ -883,7 +869,19 @@ bool CHL2MP_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 	}
 
 	pWeapon->CheckRespawn();
-	Weapon_Equip( pWeapon );
+
+	int iWeapons = 0;
+
+	for (int i = 0; i < MAX_WEAPONS && iWeapons < 2; i++)
+		if (GetWeapon(i) != NULL)
+			if (Weapon_SlotOccupied(GetWeapon(i)))
+				iWeapons++;
+	
+	if (iWeapons < 2)
+		Weapon_Equip(pWeapon);
+	
+	if (m_afButtonPressed & IN_USE)
+		Weapon_Equip( pWeapon );
 
 	return true;
 }

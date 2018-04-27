@@ -2184,13 +2184,13 @@ CBaseEntity *CBaseEntity::GetGroundEntity( void )
 void CBaseEntity::StartGroundContact( CBaseEntity *ground )
 {
 	AddFlag( FL_ONGROUND );
-//	Msg( "+++ %s starting contact with ground %s\n", GetClassname(), ground->GetClassname() );
+	// Msg( "+++ %s starting contact with ground %s\n", GetClassname(), ground->GetClassname() );
 }
 
 void CBaseEntity::EndGroundContact( CBaseEntity *ground )
 {
 	RemoveFlag( FL_ONGROUND );
-//	Msg( "--- %s ending contact with ground %s\n", GetClassname(), ground->GetClassname() );
+	// Msg( "--- %s ending contact with ground %s\n", GetClassname(), ground->GetClassname() );
 }
 
 

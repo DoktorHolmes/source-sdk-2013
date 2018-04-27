@@ -138,7 +138,7 @@ void CHudHealth::OnThink()
 		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthLow");
 	}
 
-	SetDisplayValue(m_iHealth);
+	SetDisplayValue(ceil(((float)m_iHealth) / 100.0f));
 }
 
 //-----------------------------------------------------------------------------

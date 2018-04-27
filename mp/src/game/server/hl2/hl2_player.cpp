@@ -2649,20 +2649,35 @@ bool CHL2_Player::Weapon_CanUse( CBaseCombatWeapon *pWeapon )
 void CHL2_Player::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 {
 #if	HL2_SINGLE_PRIMARY_WEAPON_MODE
-
-	if ( pWeapon->GetSlot() == WEAPON_PRIMARY_SLOT )
-	{
-		Weapon_DropSlot( WEAPON_PRIMARY_SLOT );
-	}
-
 #endif
+	if (GetActiveWeapon() != NULL)
+	{
+		int iWeapons = 0;
+
+		for (int i = 0; i < MAX_WEAPONS && iWeapons < 2; i++)
+			if (GetWeapon(i) != NULL)
+				if (Weapon_SlotOccupied(GetWeapon(i)))
+					iWeapons++;
+
+		if (iWeapons == 2)
+		{
+			Vector VecForward;
+
+			EyeVectors(&VecForward, NULL, NULL);
+
+			VecForward *= 300.0f;
+
+			Weapon_Drop(GetActiveWeapon(), NULL, &VecForward);
+		}
+	}
 
 	if( GetActiveWeapon() == NULL )
 	{
 		m_HL2Local.m_bWeaponLowered = false;
 	}
 
-	BaseClass::Weapon_Equip( pWeapon );
+	BaseClass::Weapon_Equip(pWeapon);
+	Weapon_Switch(pWeapon);
 }
 
 //-----------------------------------------------------------------------------
@@ -2733,8 +2748,11 @@ bool CHL2_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 
 		pWeapon->AddSolidFlags( FSOLID_NOT_SOLID );
 		pWeapon->AddEffects( EF_NODRAW );
-
-		Weapon_Equip( pWeapon );
+		
+		if (m_afButtonPressed & IN_USE)
+		{
+			Weapon_Equip(pWeapon);
+		}
 
 		EmitSound( "HL2Player.PickupWeapon" );
 		
