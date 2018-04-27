@@ -831,6 +831,16 @@ bool CHL2MP_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 {
 	CBaseCombatCharacter *pOwner = pWeapon->GetOwner();
 
+	int iWeapons = 0;
+
+	for (int i = 0; i < MAX_WEAPONS && iWeapons < 2; i++)
+		if (GetWeapon(i) != NULL)
+			if (Weapon_SlotOccupied(GetWeapon(i)))
+				iWeapons++;
+
+	if (iWeapons >= 2 && !(m_afButtonPressed & IN_USE))
+		return false;
+
 	// Can I have this weapon type?
 	if ( !IsAllowedToPickupWeapons() )
 		return false;
@@ -870,18 +880,7 @@ bool CHL2MP_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 
 	pWeapon->CheckRespawn();
 
-	int iWeapons = 0;
-
-	for (int i = 0; i < MAX_WEAPONS && iWeapons < 2; i++)
-		if (GetWeapon(i) != NULL)
-			if (Weapon_SlotOccupied(GetWeapon(i)))
-				iWeapons++;
-	
-	if (iWeapons < 2)
-		Weapon_Equip(pWeapon);
-	
-	if (m_afButtonPressed & IN_USE)
-		Weapon_Equip( pWeapon );
+	Weapon_Equip(pWeapon);
 
 	return true;
 }
